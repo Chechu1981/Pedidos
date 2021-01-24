@@ -139,7 +139,7 @@
     height: 0;
 }
 #nav {
-    //display: inline-block;
+    display: inline-block;
 } 
 html[xmlns] #nav {
     display: block;
