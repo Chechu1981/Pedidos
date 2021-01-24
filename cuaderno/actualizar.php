@@ -1,0 +1,35 @@
+<?php
+header("Content-type: text/javascript; charset=iso-8859-1");
+include_once '../estilos/conexion.php';
+$cliente = UTF8_encode(strtoupper($_GET['cliente']));
+$contacto = UTF8_encode(strtoupper($_GET['contacto']));
+$descripcion = UTF8_encode(strtoupper($_GET['descripcion']));
+$numero = UTF8_encode(strtoupper($_GET['numero']));
+$vehiculo = UTF8_encode(strtoupper($_GET['vehiculo']));
+$referencia = UTF8_encode(strtoupper($_GET['referencia']));
+$ubicacion = UTF8_encode(strtoupper($_GET['ubicacion']));
+$comentario = UTF8_encode(strtoupper($_GET['comentario']));
+$servido = UTF8_encode(strtoupper($_GET['servido']));
+$pedido = UTF8_encode(strtoupper($_GET['pedido']));
+$mysqli->query("UPDATE cuaderno SET cliente = '".utf8_decode($cliente)."',"
+        . "contacto= '".utf8_decode($contacto)."',"
+        . "descripcion= '".utf8_decode($descripcion)."',"
+        . "numero= '".utf8_decode($numero)."',"
+        . "vehiculo= '".utf8_decode($vehiculo)."',"
+        . "referencia= '".utf8_decode($referencia)."',"
+        . "ubicacion= '".utf8_decode($ubicacion)."',"
+        . "comentario= '".utf8_decode($comentario)."',"
+        . "servido= '".utf8_decode($servido)."',"
+        . "pedido= '".utf8_decode($pedido)."'"
+        . "WHERE id = '".$_GET['id']."'"); 
+echo "UPDATE cuaderno SET cliente = '".utf8_decode($cliente)."',"
+        . "contacto= '".utf8_decode($contacto)."',"
+        . "descripcion= '".utf8_decode($descripcion)."',"
+        . "numero= '".utf8_decode($numero)."',"
+        . "vehiculo= '".utf8_decode($vehiculo)."',"
+        . "referencia= '".utf8_decode($referencia)."',"
+        . "ubicacion= '".utf8_decode($ubicacion)."',"
+        . "comentario= '".utf8_decode($comentario)."',"
+        . "servido= '".utf8_decode($servido)."',"
+        . "pedido= '".utf8_decode($pedido)."'"
+        . "WHERE id = '".$_GET['id']."'"; 

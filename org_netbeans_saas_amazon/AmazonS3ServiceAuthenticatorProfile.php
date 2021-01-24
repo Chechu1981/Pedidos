@@ -1,0 +1,20 @@
+<?php
+
+class AmazonS3ServiceAuthenticatorProfile {
+
+    //Specify the access_key here
+    private static $accessKey = "";
+    //Specify the secret here
+    private static $secret = "";
+
+    public static function getAccessKey() {
+        return self::$accessKey;
+    }
+
+    public static function getSecret() {
+        return self::$secret;
+    }
+
+}
+
+?>

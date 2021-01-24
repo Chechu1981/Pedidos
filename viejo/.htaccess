@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Chechu"
+AuthUserfile "../htdocs/clientes/pass"
+Require valid-user
