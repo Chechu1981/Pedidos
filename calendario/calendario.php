@@ -89,7 +89,6 @@
                         <th></th>
                         <?php
                         include_once '../estilos/conexion.php';
-                        $tablas = $mysqli->query("SHOW TABLES FROM pedidos");
                         if ($_SERVER['REMOTE_USER'] == "recepcion") {
                             $buscar = $mysqli->query("SELECT * 
 				FROM lineas 
@@ -176,7 +175,7 @@
                                 $identificador = $ref[10];
                                 if ($ref[7] == 'S') {
                                     $pendiente = "style = color:green";
-                                    $ruta = "../semanal/semanal.php?pedido=" . $ref[8] . "&id=" . $ref[0] . "'";
+                                    $ruta = "../semanal/semanal.php?pedido=" . $ref[10] . "&id=" . $ref[0] . "'";
                                     $identificador = "Semanal " . $ref[10];
                                 } elseif ($ref[9] != '') {
                                     $pendiente = "style=color:red";

@@ -1,9 +1,8 @@
 <?php 
 $numero=0;
 $contador=1;
-mysql_connect("localhost","chechu");
-mysql_select_db("pedidos");
-@$sentencia=mysql_query("SELECT * FROM semanalvolvo WHERE pedido = 1 ORDER BY referencia ASC, cliente DESC;");
+include_once '../estilos/conexion.php   ';
+@$sentencia=$mysqli->query("SELECT * FROM semanalvolvo WHERE pedido = 1 ORDER BY referencia ASC, cliente DESC;");
 $pedido = mysql_fetch_row($sentencia);
 ?>
 <script>
@@ -23,7 +22,7 @@ $(function() {
 <table border='2' width='780px;' class='semanal'>
     <th>Linea</th><th><span class="enlace" onclick="listarReferencia()"><b>Referencia</b></span></th><th style="width: 18px">C</th><th>Denominaci&oacute;n</th><th>Matr&iacute;cula/Comentario</th><th><span class="enlace" onclick="listarCliente()">Cliente/OR</span></th><th>Estado</th><th><span class="enlace" onclick="verLineasSemanal()" >Fecha</span></th><th><input type="checkbox" id="all" onchange="todos()"/></th><th></th>
 <?php
-while($fila=mysql_fetch_row($sentencia)){
+while($fila = $sentencia->fetch_row()){
         $numero++;
         $chk="";
         if($fila[7]==0){					

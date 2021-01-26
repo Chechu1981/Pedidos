@@ -7,13 +7,11 @@
         <link rel="stylesheet" href="../scripts/styles.css" type="text/css" />
         <?php include_once '../scripts/estilos.php'; ?>
         <?php
-        mysql_connect("localhost", "chechu");
-        mysql_select_db("pedidos");
+        include_once '../estilos/conexion.php   ';
         $contador = 1;
-        mysql_select_db("pedidos");
         if (isset($_POST['incluir'])) {
             ?><script>alert(<?php echo $_POST['incluir'] ?>)</script><?php
-        mysql_query("INSERT INTO semanalvolvo 
+        $mysqli->query("INSERT INTO semanalvolvo 
                 (pedido, referencia, cantidad, denominacion, comentario, cliente, estado, fecha)
                 VALUES 
                 ('" . $_POST['pedido'] . "',
@@ -43,20 +41,19 @@
                 <div style="clear: both"></div>
 
                 <?php
-                mysql_select_db("pedidos");
-                $sentencia = mysql_query("SELECT * FROM listasemanalvolvo ORDER BY numero DESC;");
+                $sentencia = $mysqli->query("SELECT * FROM listasemanalvolvo ORDER BY numero DESC;");
                 ?>
                 <hr/>
                 <div>
                     <table border='2' width='780px;' class='semanalvolvo'>
                         <tr><th>Linea</th><th>Pedido</th><th>Fecha</th></tr>
                         <?php 
-                        while ($fila = mysql_fetch_row($sentencia)) { 
-                            $nlineas = mysql_query("SELECT COUNT(id),pedido FROM semanalvolvo WHERE pedido = ".$fila[0]." GROUP BY pedido;");
-                            $cantidad = mysql_fetch_row($nlineas);
+                        while ($fila = $sentencia->fetch_row()) { 
+                            $nlineas = $mysqli->query("SELECT COUNT(id),pedido FROM semanalvolvo WHERE pedido = ".$fila[0]." GROUP BY pedido;");
+                            $cantidad = $nlineas->fetch_row();
                             ?>
                             <tr>
-                                <td style="text-align:center;"><?php echo $cantidad[0]; ?></td>
+                                <td style="text-align:center;"><?php echo @$cantidad[0]; ?></td>
                                 <td style="text-align:center;">Pedido <?php echo utf8_encode($fila[0]) ?></td>
                                 <td style='text-align:center;'> <?php
                         if (utf8_encode($fila[1]) == 'En curso') {

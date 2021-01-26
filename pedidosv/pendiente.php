@@ -33,8 +33,7 @@
         <div class="principal">
             <?php 
             include_once '../scripts/menu.php';
-            mysql_connect("localhost","chechu");
-            mysql_select_db("pedidos");
+            include_once '../estilos/conexion.php';
             $destino=$_GET['destino'];
             ?>
         <div class="banda">
@@ -53,17 +52,17 @@
                 <th>Pedido</th>
                 <?php 
                     $contador=1;
-                    $sentencia= mysql_query("SELECT * FROM lineasvolvo WHERE ps LIKE 'checked=\"checked\"' ORDER BY fecha DESC");
+                    $sentencia= $mysqli->query("SELECT * FROM lineasvolvo WHERE ps LIKE 'checked=\"checked\"' ORDER BY fecha DESC");
                     if($destino=="T"){
                         ?><h1>Taller</h1> <?php
-                        $sentencia= mysql_query("SELECT * FROM lineasvolvo WHERE destino LIKE '".$destino."' AND ps LIKE 'checked=\"checked\"' ORDER BY fecha DESC");
+                        $sentencia= $mysqli->query("SELECT * FROM lineasvolvo WHERE destino LIKE '".$destino."' AND ps LIKE 'checked=\"checked\"' ORDER BY fecha DESC");
                     }elseif($destino=="M"){
                         ?><h1>Mostrador</h1> <?php
-                        $sentencia= mysql_query("SELECT * FROM lineasvolvo WHERE destino LIKE '".$destino."' AND ps LIKE 'checked=\"checked\"' ORDER BY fecha DESC");
+                        $sentencia= $mysqli->query("SELECT * FROM lineasvolvo WHERE destino LIKE '".$destino."' AND ps LIKE 'checked=\"checked\"' ORDER BY fecha DESC");
                     }else{
                         ?><h1>Todos</h1> <?php
                     }
-                    while($fila=mysql_fetch_row($sentencia)){
+                    while($fila = $sentencia->fetch_row()){
                         $mss = Array ('enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre');
                         $ms="";
                         $n=0;

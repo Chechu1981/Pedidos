@@ -2,8 +2,8 @@
 <?php 
 include ('../estilos/conexion.php');
 //if(isset($_GET['oper']) and isset($_GET['ord']) and isset($_GET['prove']))
-$result=mysql_query("SELECT * FROM recepcion WHERE matricula LIKE '%".$_GET['matricula']."%'AND orden LIKE '%".$_GET['orden']."%' AND observaciones LIKE '%".$_GET['observaciones']."%' ORDER BY f_entrega DESC;");
-if(mysql_num_rows($result)>0){ ?>
+$result = $mysqli->query("SELECT * FROM recepcion WHERE matricula LIKE '%".$_GET['matricula']."%'AND orden LIKE '%".$_GET['orden']."%' AND observaciones LIKE '%".$_GET['observaciones']."%' ORDER BY f_entrega DESC;");
+if($result->num_rows > 0){ ?>
     <table border="1" class="listbuscar">
         <th>Orden</th>
         <th>Matr&iacute;cula</th>
@@ -17,7 +17,7 @@ if(mysql_num_rows($result)>0){ ?>
         <th>Observaciones</th>
         <?php
         header("Cache-Control: no-store, no-cache, must-revalidate");
-        while(@$fila=mysql_fetch_row($result)){
+        while(@$fila = $result->fetch_row()){
             $date1 = date_create($fila[3]);
             $date2 = date_create($fila[4]);
             $date3 = date_create($fila[7]);

@@ -23,7 +23,7 @@
                 <a style="margin-left: 500px;padding-top: 10px" href="configuracion.php" title="Volver"><img src="../imagenes/atras.png"></a>
                 </div>
                 <div style="clear:both"></div>
-                <div id="formulario" style="display: none"><?php include 'form_agentes.php'; ?></div>
+                <div id="formulario" style="display: none"><?php include 'frmPersonal.php'; ?></div>
                 <div id="agentes" style="width: 200px;margin: auto"></div>
             </div>
             <?php include_once '../scripts/pie.php'; ?>

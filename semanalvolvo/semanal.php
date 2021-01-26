@@ -5,15 +5,13 @@
         <title>Semanal</title>
         <link rel="shortcut icon" href="../imagenes/chechu.ico" />
         <link rel="stylesheet" href="../scripts/styles.css" type="text/css" />
-        <?php include_once '../scripts/estilos.php'; ?>
-        <?php
-        mysql_connect("localhost", "chechu");
-        mysql_select_db("pedidos");
+        <?php 
+        include_once '../scripts/estilos.php';        
+        include_once '../estilos/conexion.php';
         $contador = 1;
-        mysql_select_db("pedidos");
         if (isset($_POST['incluir'])) {
             ?><script>alert(<?php echo $_POST['incluir'] ?>)</script><?php
-            mysql_query("INSERT INTO semanalvolvo 
+            $mysqli->query("INSERT INTO semanalvolvo 
                 (pedido, referencia, cantidad, denominacion, comentario, cliente, estado, fecha)
                 VALUES 
                 ('" . $_POST['pedido'] . "',
@@ -52,24 +50,21 @@
                     $(function() {
                         var availableTags = [
 <?php
-mysql_connect("localhost", "chechu");
-mysql_select_db("carrion");
-$clientes = mysql_query("SELECT * FROM hoja1;");
+$clientes = $mysqli->query("SELECT * FROM hoja1;");
 $cont = 0;
-while ($nomcli = mysql_fetch_row($clientes)) {
+while ($nomcli = $clientes->fetch_row()) {
     $imprime = '"' . $nomcli[1] . ' (' . $nomcli[0] . ')" ';
-    if ($cont < (mysql_num_rows($clientes) - 1)) {
+    if ($cont < ($clientes->num_rows - 1)) {
         $imprime = $imprime . ",";
         $cont++;
     }
     echo utf8_encode($imprime);
 }
-mysql_select_db("pedidos");
 if (@isset($_GET['pedido'])) {
     $pedido = $_GET['pedido'];
 } else {
-    $psen = mysql_query("SELECT numero FROM listasemanalvolvo ORDER BY numero DESC;");
-    $ped = mysql_fetch_row($psen);
+    $psen = $mysqli->query("SELECT numero FROM listasemanalvolvo ORDER BY numero DESC;");
+    $ped = $psen->fetch_row();
     $pedido = $ped[0];
 }
 ?>
@@ -137,8 +132,7 @@ if (@isset($_GET['pedido'])) {
                     </div>
                     <?php
                 }
-                mysql_select_db("pedidos");
-                $fechasemanal = mysql_query("SELECT * FROM listasemanalvolvo WHERE numero LIKE '" . $pedido . "';");
+                $fechasemanal = $mysqli->query("SELECT * FROM listasemanalvolvo WHERE numero LIKE '" . $pedido . "';");
                 if (isset($_GET['pedido'])) {
                     if ($pedido > 1) {
                         ?>
@@ -148,7 +142,7 @@ if (@isset($_GET['pedido'])) {
                     <a href="semanal.php?pedido=<?php echo $pedido - 1; ?>" title="Anterior" ><img src="../imagenes/carousel_previous_bg.gif" /></a>
                     <?php
                 }
-                $grabado = mysql_fetch_row($fechasemanal)
+                $grabado = $fechasemanal->fetch_row()
                 ?>
                 <h1>Pedido <?php echo $pedido; ?></h1><h3><?php echo utf8_encode($grabado[1]); ?></h3><img src="../imagenes/print.png" title="Imprimir pedido." style="cursor:pointer;float: right" onclick="printsem(<?php echo $pedido; ?>)" />
                 <?php if (isset($_GET['encurso']) and $_GET['encurso'] == 'SI' and $recepcion == 'NO') { ?>
@@ -163,9 +157,9 @@ if (@isset($_GET['pedido'])) {
                     <table border='2' width='780px;' class='semanalvolvo'>
                         <tr><th></th><th><a href="semref.php?encurso=<?php echo @$_GET['encurso']; ?>&pedido=<?php echo $pedido; ?>" >Referencia</a></th><th style="width: 18px">C</th><th>Denominaci&oacute;n</th><th>Matr&iacute;cula/Comentario</th><th><a href="semcli.php?encurso=<?php echo @$_GET['encurso']; ?>&pedido=<?php echo $pedido; ?>" >Cliente/OR</a></th><th><a href="semanal.php?encurso=<?php echo @$_GET['encurso']; ?>&pedido=<?php echo $pedido; ?>"><b>Fecha</b></a></th><th></th></tr>
                         <?php
-                        $sentencia = mysql_query("SELECT * FROM semanalvolvo WHERE pedido LIKE '" . $pedido . "' ORDER BY fecha DESC,cliente,referencia ;");
+                        $sentencia = $mysqli->query("SELECT * FROM semanalvolvo WHERE pedido LIKE '" . $pedido . "' ORDER BY fecha DESC,cliente,referencia ;");
                         $resalto = "";
-                        while ($fila = @mysql_fetch_row($sentencia)) {
+                        while ($fila = @$sentencia->fetch_row()) {
                             if ($fila[0] == @$_GET['id']) {
                                 $resalto = "style='background-color:green;color:yellow;font-style:bold;'";
                             } else {

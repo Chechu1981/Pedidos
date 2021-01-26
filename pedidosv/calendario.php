@@ -65,9 +65,8 @@
                         <th>Pedido</th>
                         <th>PS</th>
                         <?php
-                        mysql_connect("localhost", "chechu");
-                        mysql_select_db("pedidos");
-                        $buscar = mysql_query("SELECT id,referencia,cantidad,denominacion,matricula,cliente,fecha,destino,pedido,ps,fecha_pedido 
+                        include_once '../estilos/conexion.php';
+                        @$buscar = $mysqli->query("SELECT id,referencia,cantidad,denominacion,matricula,cliente,fecha,destino,pedido,ps,fecha_pedido 
 				FROM lineasvolvo 
 				WHERE referencia LIKE '%" . $_POST['referencia'] . "%' 
 				AND matricula LIKE '%" . $_POST['matricula'] . "%' 
@@ -82,8 +81,9 @@
                                 AND denominacion LIKE '%" . $_POST['denominacion'] . "%'
                                 ORDER BY fecha DESC; ");
                         $maximo = 100;
-                        while ($ref = @mysql_fetch_row($buscar) and $maximo >= 0) {
+                        while ($ref = $buscar->fetch_row()) {
                             $mss = Array('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre');
+                            
                             $anio = substr($ref[10], -4);
                             $ms = "";
                             $n = 0;
@@ -99,14 +99,14 @@
                             $identificador = $ref[10];
                             if ($ref[7] == 'S') {
                                 $pendiente = "style = color:green";
-                                $ruta = "../../semanalvolvo/semanal.php?pedido=" . $ref[8] . "&id=" . $ref[0] . "'";
+                                $ruta = "../semanalvolvo/semanal.php?pedido=" . $ref[10] . "&id=" . $ref[0] . "'";
                                 $identificador = "Semanal " . $ref[10];
                             } elseif ($ref[9] != '') {
                                 $pendiente = "style=color:red";
-                                $ruta = "../../pedidosv/pedidosv.php?ano=" . $anio . "&mes=" . $ms . "&numes=" . $n . "&dia=" . $dy . "&ref=" . $ref[1] . "'";
+                                $ruta = "../pedidosv/pedidosv.php?ano=" . $anio . "&mes=" . $ms . "&numes=" . $n . "&dia=" . $dy . "&ref=" . $ref[1] . "'";
                             } else {
                                 $pendiente = '';
-                                $ruta = "../../pedidosv/pedidosv.php?ano=" . $anio . "&mes=" . $ms . "&numes=" . $n . "&dia=" . $dy . "&ref=" . $ref[1] . "'";
+                                $ruta = "../pedidosv/pedidosv.php?ano=" . $anio . "&mes=" . $ms . "&numes=" . $n . "&dia=" . $dy . "&ref=" . $ref[1] . "'";
                             }
                             $mes = '';
                             $date = date_create($ref[6]);

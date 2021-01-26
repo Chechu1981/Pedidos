@@ -6,8 +6,8 @@
     <th></th>
 <?php 
 include '../estilos/conexion.php';
-$agentes=mysql_query("SELECT * FROM usuarios;");
-while($nom=mysql_fetch_row($agentes)){ ?>
+$agentes = $mysqli->query("SELECT * FROM usuarios;");
+while($nom = $agentes->fetch_row()){ ?>
     <tr>
         <td><?php echo utf8_encode(strtoupper($nom[1])); ?></td>
         <td><?php echo $nom[2]; ?></td>

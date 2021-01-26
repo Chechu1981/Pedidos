@@ -1,27 +1,27 @@
 <link rel="stylesheet" type="text/css" href="../estilos/style.css" />
 <?php
 include '../estilos/conexion.php';
-mysql_select_db("pedidos");
-$buscar=mysql_query("SELECT * 
+
+$buscar=$mysqli->query("SELECT * 
 FROM lineas 
 WHERE cliente LIKE '%".$_GET['cliente']."%'
 AND destino LIKE 'T'
 ORDER BY fecha DESC;");
 $maximo = 100;
-if(mysql_num_rows($buscar)>0){
+if($buscar->num_rows > 0){
 ?>
 <table class="listado">
     <th>Referencia</th>
     <th>C</th>
-    <th>Denominación</th>
-    <th>Matrícula</th>
+    <th>Denominaciï¿½n</th>
+    <th>Matrï¿½cula</th>
     <th>Cliente</th>
     <th>Fecha</th>
     <th>D</th>
     <th>Pedido</th>
     <th>PS</th>
 <?php
-while($ref=@mysql_fetch_row($buscar) and $maximo>=0){
+while($ref = @$buscar->fetch_row() and $maximo>=0){
     $mss = Array ('enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre');
     $anio=substr($ref[10],-4);
     $ms="";

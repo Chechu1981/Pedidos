@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-/W3C/DTD XHTML 1.0 Transitional/EN" "http:/www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Coches de cortesía</title>
-        <link rel="shortcut icon" href="../../imagenes/chechu.ico" />
-        <link rel="stylesheet" href="../../scripts/styles.css" type="text/css" />
-        <link rel="stylesheet" type="text/css" href="../../estilos/style.css" />
+        <link rel="shortcut icon" href="../imagenes/chechu.ico" />
+        <link rel="stylesheet" href="../scripts/styles.css" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="../estilos/style.css" />
         <?php include '../../calendario/calcular_dia.php'; ?>
         <script type="text/javascript">
-            //Crear Objetos AJAX
+            /Crear Objetos AJAX
             function objetoAjax(){
             var xmlhttp=false;
             try {
@@ -25,11 +25,11 @@
 			}
 			return xmlhttp;
 		}
-            // Variables AJAX    
+            / Variables AJAX    
             var eliminar_coche=objetoAjax();
             var listado_coches=objetoAjax();
             
-            //Funciones AJAX
+            /Funciones AJAX
             function borrar(id,matricula){
                 confirmar=confirm("¿Quieres eliminar "+matricula+" de la lista?")
                 if(confirmar){
@@ -64,10 +64,10 @@
                 listado_coches.onreadystatechange = lista;             
             }
             
-            // Si pulsamos intro
+            / Si pulsamos intro
             function intro(tecla){
                 if(window.event.keyCode == 13){
-                   //sin función 
+                   /sin función 
                 }
             }
         </script>

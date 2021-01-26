@@ -14,7 +14,7 @@
         <link rel="stylesheet" type="text/css" href="css/jquery.jdigiclock.css" />
         <?php
         include '../calendario/calcular_dia.php';
-
+        include_once '../estilos/conexion.php';
         function activar() {
             $a = false;
             $fecha = getdate(time());
@@ -60,9 +60,10 @@
 
 
         function actualizar() {
+            global $mysqli;
             $sen = $mysqli->query("SELECT * FROM lineasvolvo WHERE fecha_pedido like '" . $_GET['dia'] . $_GET['mes'] . $_GET['ano'] . "' ORDER BY pedido,destino,cliente;");
-            if (@mysql_num_rows($sen) > 0) {
-                while ($fila = mysql_fetch_row($sen)) {
+            if (@$sen->num_rows > 0) {
+                while ($fila = $sen->fetch_row()) {
                     if (isset($_GET['marcado']) and isset($_POST[$fila[0]])) {
                         $mysqli->query("UPDATE  lineasvolvo SET pedido='checked=\"checked\"' WHERE id='" . $fila[0] . "'");
                     } elseif (isset($_GET['marcado'])) {
@@ -156,7 +157,9 @@
                 tt = display_c();
             }
             $(document).ready(function() {
-<?php if ($_SERVER['REMOTE_USER'] == "chechu") { ?>
+<?php 
+$recurso = $mysqli->query("SELECT * FROM incidencias ORDER BY referencia ASC");
+if ($_SERVER['REMOTE_USER'] == "chechu" && $recurso->num_rows > 0) { ?>
                     var valor = 1;
                     setInterval(function() {
                         if (valor === 1) {
@@ -360,9 +363,9 @@
                 var availableTags = [
 <?php
 $contador = 0;
-while ($nomcli = mysql_fetch_row($clientes)) {
+while ($nomcli = $clientes->fetch_row()) {
     $imprime = '"' . $nomcli[1] . ' (' . $nomcli[0] . ')" ';
-    if ($contador < (mysql_num_rows($clientes) - 1)) {
+    if ($contador < ($clientes->num_rows - 1)) {
         $imprime = $imprime . ",";
         $contador++;
     }
@@ -477,12 +480,11 @@ while ($nomcli = mysql_fetch_row($clientes)) {
     </head>
     <body onload="javascript:foco();">
         <?php
-        mysql_select_db("carrion");
         $sen = $mysqli->query("SELECT * FROM nombres WHERE aplicacion = 'oferta'");
         $oferta = '';
-        while ($mes = mysql_fetch_row($sen))
+        while ($mes = $sen->fetch_row())
             $oferta = $mes[2];
-        mysql_select_db("pedidos");
+        
         ?>   
         <div class="contenedor">
             <header>
@@ -510,24 +512,23 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                                 </li>
                             </ul>
                             <?php
-                            include '../estilos/conexion.php';
                             $recurso = $mysqli->query("SELECT * FROM incidencias ORDER BY referencia ASC");
-                            if ($_SERVER['REMOTE_USER'] == "chechu" && mysql_num_rows($recurso) > 0) {
+                            if ($_SERVER['REMOTE_USER'] == "chechu" && $recurso->num_rows > 0) {
                                 ?>
-                                <div id="alerta" ><?php echo mysql_num_rows($recurso); ?></div>
+                                <div id="alerta" ><?php echo $recurso->num_rows; ?></div>
                             <?php } ?>
                         </td>
                         <td style="width: 300px;text-align: center">
                             <?php
                             $furgonarsc = $mysqli->query("SELECT * FROM nombres WHERE aplicacion = 'furgona' ");
-                            $furgona = mysql_fetch_row($furgonarsc);
+                            $furgona = $furgonarsc->fetch_row();
                             $repartidorrsc = $mysqli->query("SELECT * FROM nombres WHERE aplicacion = 'repartidor' ");
-                            $repartidor = mysql_fetch_row($repartidorrsc);
+                            $repartidor = $repartidorrsc->fetch_row();
                             $horarsc = $mysqli->query("SELECT * FROM nombres WHERE aplicacion = 'hora' ");
-                            $horaReparto = mysql_fetch_row($horarsc);
+                            $horaReparto = $horarsc->fetch_row();
                             $hora = date_create($horaReparto[2]);
                             $lista = $mysqli->query("SELECT * FROM ruta WHERE entregado = 'EN CURSO' ORDER BY prioridad,cliente ASC");
-                            $nrepartos = mysql_num_rows($lista);
+                            $nrepartos = @$lista->num_rows;
                             $tiempo = $nrepartos * 11;
                             $horas = (int) ($tiempo / 60);
                             $minutos = (int) ($tiempo - ($horas * 60));
@@ -548,9 +549,8 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                             <?php } ?>
                             <h4 style="color: blue;margin-bottom: 0px;">Próximo semanal: 
                                 <?php
-                                mysql_select_db("carrion");
                                 $fecha_semanal = $mysqli->query("SELECT cadena FROM nombres WHERE aplicacion = 'proximoSemanal'");
-                                $dia_semanal = mysql_fetch_row($fecha_semanal);
+                                $dia_semanal = $fecha_semanal->fetch_row();
                                 echo utf8_encode($dia_semanal[0]);
                                 ?></h4>
                             <div style="margin: 8px;width: 200px;float: right;">
@@ -569,7 +569,6 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                         </td>
                         <td style="text-align:center">
                             <?php
-                            mysql_select_db("pedidos");
                             $saludo = getdate(time());
                             if ($_SERVER['REMOTE_USER'] == "medina") {
                                 if ($saludo['hours'] < 12) {
@@ -597,7 +596,7 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                                 <tr>    
                                     <td>
                                         <?php if ($_SERVER['REMOTE_USER'] != "medina" AND $_SERVER['REMOTE_USER'] != "recepcion") { ?>
-                                            <a href="../../principal/configuracion.php" title="Configuración"><img src="../../imagenes/config.png" height="20" /></a> 
+                                            <a href="../../principal/configuracion.php" title="Configuración"><img src="../imagenes/config.png" height="20" /></a> 
                                         <?php } ?>
                                     </td>
                                 </tr>
@@ -621,11 +620,10 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                     <tr>
                         <td colspan="5">
                             <?php
-                            mysql_select_db("carrion");
                             $aviso = $mysqli->query("SELECT * FROM nombres WHERE aplicacion = 'aviso';");
                             $estado = $mysqli->query("SELECT * FROM nombres WHERE aplicacion = 'eaviso';");
-                            $texto = mysql_fetch_row($aviso);
-                            $sw = mysql_fetch_row($estado);
+                            $texto = $aviso->fetch_row();
+                            $sw = $estado->fetch_row();
                             ?>
                             <div class="aviso" <?php if ($sw[2] == 'si') { ?> style="display: block" <?php } if ($sw[2] == 'no') { ?> style="display: none" <?php } ?> ><img src="../imagenes/peligro.png" style="margin: 0 8px 8px 0;" align="center" border="0" /><?php echo utf8_encode($texto[2]); ?><br/></div>
                         </td>
@@ -648,10 +646,6 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                 <?php include_once '../scripts/descuentos.php'; ?>
             </div>
             <div class="principal">
-
-                <?php
-                mysql_select_db("pedidos");
-                ?>
             </div>
             <div class="banda">
                 <img src="../imagenes/logo_Volvo.png" width="45" style="float: left;margin: 8px" /><h2 style="color:blue;padding:15px;"><?php echo "Pedido del " . $_GET['dia'] . " de " . $_GET['mes'] . " de " . $_GET['ano']; ?></h2>
@@ -685,13 +679,13 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                                     <?php
                                     if ($_SERVER['REMOTE_ADDR'] == '10.159.64.47' or $_SERVER['REMOTE_ADDR'] == '10.159.64.58') {
                                         ?>
-                                        <input type="radio"  name="destino" value="T" checked="checked" onclick="javascript:mostrarsalida();" ><span style="font-size:12px">Taller</span></input><br/>
-                                        <input type="radio" name="destino" value="M" onclick="javascript:ocultarsalida();" ><span style="font-size:12px">Mostrador</span></input><br/>
+                                        <input type="radio"  name="destino" value="T" checked="checked"  ><span style="font-size:12px">Taller</span></input><br/>
+                                        <input type="radio" name="destino" value="M"  ><span style="font-size:12px">Mostrador</span></input><br/>
                                     <?php } else { ?>
                                         <?php if ($_SERVER['REMOTE_USER'] != "medina") { ?>
-                                            <input type="radio" name="destino" value="T" onclick="javascript:mostrarsalida();" ><span style="font-size:12px">Taller</span></input><br/>
+                                            <input type="radio" name="destino" value="T"  ><span style="font-size:12px">Taller</span></input><br/>
                                         <?php } ?>
-                                        <input type="radio" name="destino" value="M" checked="checked" onclick="javascript:ocultarsalida();" ><span style="font-size:12px">Mostrador</span></input><br/>
+                                        <input type="radio" name="destino" value="M" checked="checked"  ><span style="font-size:12px">Mostrador</span></input><br/>
                                     <?php } ?>
                                 </td>
                             </tr>
@@ -758,7 +752,7 @@ while ($nomcli = mysql_fetch_row($clientes)) {
             } else {
                 @$sentencia = $mysqli->query("SELECT * FROM lineasvolvo WHERE fecha_pedido LIKE '" . $_GET['dia'] . $_GET['mes'] . $_GET['ano'] . "' ORDER BY pedido,destino,cliente,referencia;");
             }
-            if (@mysql_num_rows($sentencia) > 0) {
+            if (@$sentencia->num_rows > 0) {
                 $lineasTaller = $mysqli->query("SELECT * FROM lineasvolvo WHERE fecha_pedido LIKE '" . $_GET['dia'] . $_GET['mes'] . $_GET['ano'] . "' AND destino LIKE 'T' ORDER BY pedido,destino,cliente,referencia;");
                 $lineasMostrador = $mysqli->query("SELECT * FROM lineasvolvo WHERE fecha_pedido LIKE '" . $_GET['dia'] . $_GET['mes'] . $_GET['ano'] . "' AND destino LIKE 'M' ORDER BY pedido,destino,cliente,referencia;");
                 $alldia = $mysqli->query("SELECT * FROM lineasvolvo WHERE fecha_pedido LIKE '" . $_GET['dia'] . $_GET['mes'] . $_GET['ano'] . "' ORDER BY pedido,destino,cliente,referencia;");
@@ -766,7 +760,7 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                 $todas = $mysqli->query("SELECT * FROM lineasvolvo;");
                 if ($_SERVER['REMOTE_USER'] != "recepcion") {
                     ?>
-                        <div class="lineas"><?php echo mysql_num_rows($sentencia); ?> lineas.</div>
+                        <div class="lineas"><?php echo $sentencia->num_rows; ?> lineas.</div>
                         <?php
                     }
                     //Formulario de lineas marcadas
@@ -790,15 +784,15 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                                                             } else {
                                                                 @$sentencia = $mysqli->query("SELECT * FROM lineasvolvo WHERE destino LIKE 'M' AND fecha_pedido like '" . $_GET['dia'] . $_GET['mes'] . $_GET['ano'] . "' ORDER BY pedido,destino,cliente,referencia;");
                                                             }
-                                                            while ($fila = mysql_fetch_row($sentencia)) {
+                                                            while ($fila = $sentencia->fetch_row()) {
                                                                 $numero++;
                                                                 $imp_negr = "";
                                                                 $encontrado = "";
-                                                                if ($fila[8] != '' && $fila[9] != '') {
+                                                                if ($fila[9] != '' && $fila[10] != '') {
                                                                     $gris = " class=\"ps\" ";
                                                                     $imp_negr = "style='font-weight: bold;background-color:#ddd;'";
                                                                     $ps = "";
-                                                                } elseif ($fila[8] != '') {
+                                                                } elseif ($fila[9] != '') {
                                                                     $gris = "class=\"sombra\"";
                                                                     $ps = "";
                                                                 } else {
@@ -837,17 +831,17 @@ while ($nomcli = mysql_fetch_row($clientes)) {
 						</td>";
                                                                     ?>
                                             <td style="text-align:center;">
-                                                <input type="checkbox" name='<?php echo $fila[0]; ?>' <?php echo $fila[8]; ?> />
+                                                <input type="checkbox" name='<?php echo $fila[0]; ?>' <?php echo $fila[9]; ?> />
                                             </td>
                                             <td style='text-align:center;'>
-                                                <input type="checkbox" <?php echo $ps; ?> name='<?php echo "ps" . $fila[0]; ?>' <?php echo $fila[9]; ?> />
+                                                <input type="checkbox" <?php echo $ps; ?> name='<?php echo "ps" . $fila[0]; ?>' <?php echo $fila[10]; ?> />
                                             </td>
                                             </tr>
                                             <?php
                                         } else {
                                             ?>
-                                            <td style="text-align:center;"><input disabled="disabled" type="checkbox" name='<?php echo $numero; ?>' <?php echo $fila[8]; ?> /></td>
-                                            <td style='text-align:center;'><input disabled="disabled" type="checkbox" name='<?php echo "ps" . $numero; ?>' <?php echo $fila[9]; ?> /></td>
+                                            <td style="text-align:center;"><input disabled="disabled" type="checkbox" name='<?php echo $numero; ?>' <?php echo $fila[9]; ?> /></td>
+                                            <td style='text-align:center;'><input disabled="disabled" type="checkbox" name='<?php echo "ps" . $numero; ?>' <?php echo $fila[10]; ?> /></td>
                                             </tr>
                                             <?php
                                         }
@@ -870,15 +864,15 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                                                                     $numero = 0;
                                                                     //Escribo las lineas en la tabla
                                                                     @$sentencia = $mysqli->query("SELECT * FROM lineasvolvo WHERE destino LIKE 'T' AND fecha_pedido like '" . $_GET['dia'] . $_GET['mes'] . $_GET['ano'] . "' ORDER BY pedido,destino,cliente,referencia;");
-                                                                    while ($fila = mysql_fetch_row($sentencia)) {
+                                                                    while ($fila = $sentencia->fetch_row()) {
                                                                         $numero++;
                                                                         $imp_negr = "";
                                                                         $encontrado = "";
-                                                                        if ($fila[8] != '' && $fila[9] != '') {
+                                                                        if ($fila[9] != '' && $fila[10] != '') {
                                                                             $gris = " class=\"ps\" ";
                                                                             $imp_negr = "style='font-weight: bold;background-color:#ddd;'";
                                                                             $ps = "";
-                                                                        } elseif ($fila[8] != '') {
+                                                                        } elseif ($fila[9] != '') {
                                                                             $gris = "class=\"sombra\"";
                                                                             $ps = "";
                                                                         } else {
@@ -924,17 +918,17 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                                                     }
                                                     ?>
                                             <td style="text-align:center;">
-                                                <input <?php if ($_SERVER['REMOTE_USER'] == 'recepcion') { ?> disabled="disabled" <?php } ?> type="checkbox" name='<?php echo $fila[0]; ?>' <?php echo $fila[8]; ?> />
+                                                <input <?php if ($_SERVER['REMOTE_USER'] == 'recepcion') { ?> disabled="disabled" <?php } ?> type="checkbox" name='<?php echo $fila[0]; ?>' <?php echo $fila[9]; ?> />
                                             </td>
                                             <td style='text-align:center;'>
-                                                <input <?php if ($_SERVER['REMOTE_USER'] == 'recepcion') { ?> disabled="disabled" <?php } ?> type="checkbox" <?php echo $ps; ?> name='<?php echo "ps" . $fila[0]; ?>' <?php echo $fila[9]; ?> />
+                                                <input <?php if ($_SERVER['REMOTE_USER'] == 'recepcion') { ?> disabled="disabled" <?php } ?> type="checkbox" <?php echo $ps; ?> name='<?php echo "ps" . $fila[0]; ?>' <?php echo $fila[10]; ?> />
                                             </td>
                                             </tr>
                                             <?php
                                         } else {
                                             ?>
-                                            <td style="text-align:center;"><input disabled="disabled" type="checkbox" name='<?php echo $numero; ?>' <?php echo $fila[8]; ?> /></td>
-                                            <td style='text-align:center;'><input disabled="disabled" type="checkbox" name='<?php echo "ps" . $numero; ?>' <?php echo $fila[9]; ?> /></td>
+                                            <td style="text-align:center;"><input disabled="disabled" type="checkbox" name='<?php echo $numero; ?>' <?php echo $fila[9]; ?> /></td>
+                                            <td style='text-align:center;'><input disabled="disabled" type="checkbox" name='<?php echo "ps" . $numero; ?>' <?php echo $fila[10]; ?> /></td>
                                             </tr>
                                             <?php
                                         }
@@ -1011,19 +1005,20 @@ while ($nomcli = mysql_fetch_row($clientes)) {
                 else
                     echo "<div class='resultado'>No hay lineas</div>";
             }
-            include_once '../scripts/pie.php';
+            
             ?>
         </div>
         <?php
+        include_once '../scripts/pie.php';
         $_POST = Array();
         if (isset($alldia)) {
             ?>
             <!--<div style="position: fixed; top: 140px; left: 20px;">    
-                    <div class="lineas">MOSTRADOR <?php echo mysql_num_rows($lineasMostrador); ?> </div>
-                    <div class="lineas">TALLER <?php echo mysql_num_rows($lineasTaller); ?> </div>
-                    <div class="lineas">TOTAL <?php echo mysql_num_rows($alldia); ?> </div>
+                    <div class="lineas">MOSTRADOR <?php echo $lineasMostrador->num_rows; ?> </div>
+                    <div class="lineas">TALLER <?php echo $lineasTaller->num_rows; ?> </div>
+                    <div class="lineas">TOTAL <?php echo $alldia->num_rows; ?> </div>
                     <div class="lineas"><?php echo strtoupper($_GET['mes']) . " " . mysql_num_rows($allmes); ?> </div>
-                    <div class="lineas"><?php echo mysql_num_rows($todas); ?> lineas EN TOTAL.</div>
+                    <div class="lineas"><?php echo $todas->num_rows; ?> lineas EN TOTAL.</div>
                 </div>-->
         <?php } ?>
         <input class='calendario' type="text" id="calen" />

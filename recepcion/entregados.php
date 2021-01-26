@@ -16,8 +16,8 @@
     include '../estilos/conexion.php';
     $numero=0;
     //Escribo las lineas en la tabla
-    @$sentencia=mysql_query("SELECT * FROM recepcion WHERE entregado LIKE 'SI' ORDER BY f_entrega DESC;");
-    while($fila=mysql_fetch_row($sentencia)){
+    @$sentencia=$mysqli->query("SELECT * FROM recepcion WHERE entregado LIKE 'SI' ORDER BY f_entrega DESC;");
+    while($fila = $sentencia->fetch_row()){
             $numero++;
             $date1 = date_create($fila[3]);
             $date2 = date_create($fila[4]);

@@ -4,8 +4,8 @@
     include '../../estilos/conexion.php';
     $numero=0;
     //Escribo las lineas en la tabla
-    @$sentencia=mysql_query("SELECT * FROM coches;");
-    while($fila=mysql_fetch_row($sentencia)){
+    @$sentencia = $mysqli->query("SELECT * FROM coches;");
+    while($fila = $SENTENCIA->fetch_row()){
             $numero++;
             ?> <tr>
                 <td style="text-align: center"><?php echo $numero; ?></td>

@@ -1,6 +1,6 @@
 <?php
 include '../estilos/conexion.php';
-mysql_query("INSERT INTO recepcion (orden,matricula,f_entrada,f_peritacion,compromiso,pte_pr,f_entrega,cortesia,c_calidad,observaciones,entregado)
+$mysqli->query("INSERT INTO recepcion (orden,matricula,f_entrada,f_peritacion,compromiso,pte_pr,f_entrega,cortesia,c_calidad,observaciones,entregado)
     VALUES('".strtoupper($_POST['orden'])."',
         '".strtoupper($_POST['matricula'])."',
         '".strtoupper($_POST['fentrada'])."',
